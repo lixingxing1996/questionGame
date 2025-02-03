@@ -30,6 +30,21 @@
 - SQLite3
 - Apache/Nginx
 
+## 系统截图
+
+### 开始页面
+![游戏界面](screenshot/1.png)
+
+### 比赛开始
+![题目展示](screenshot/2.png)
+
+### 比赛中
+![答题结果](screenshot/3.png)
+
+
+### 管理界面
+![管理界面](screenshot/4.png)
+
 ## 快速开始
 
 ### 安装
