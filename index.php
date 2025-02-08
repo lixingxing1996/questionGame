@@ -22,8 +22,8 @@ $students = getStudents();
         <div class="section bg-gradient-to-r from-blue-500 to-purple-600">
             <div class="max-w-4xl mx-auto px-4 h-screen flex items-center justify-center">
                 <div class="text-center text-white">
-                    <h1 class="text-5xl font-bold mb-8">欢迎使用新单词游戏记忆法</h1>
-                    <p class="text-xl mb-8">由春泽研发的创新学习方式</p>
+                    <h1 class="text-5xl font-bold mb-8">《佛说英语》</h1>
+                    <p class="text-xl mb-8">单词巩固与提升</p>
                     <button onclick="confirmWelcome()" class="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors mb-8">
                         开始体验
                     </button>

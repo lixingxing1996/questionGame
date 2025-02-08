@@ -298,4 +298,31 @@ function createMatch($groupId, $student1Id, $student2Id) {
     }
 }
 
-// ... 原functions.php的其他内容保持不变 ... 
+// 删除问题
+function deleteQuestion($questionId) {
+    $db = getDB();
+    $stmt = $db->prepare('DELETE FROM questions WHERE id = :id');
+    $stmt->bindValue(':id', $questionId, SQLITE3_INTEGER);
+    return $stmt->execute();
+}
+
+function updateQuestion($id, $question, $optionA, $optionB, $optionC, $correctOption, $points) {
+    $db = getDB();
+    $stmt = $db->prepare('UPDATE questions SET 
+        question = :question, 
+        option_a = :option_a, 
+        option_b = :option_b, 
+        option_c = :option_c, 
+        correct_option = :correct_option, 
+        points = :points 
+        WHERE id = :id');
+    $stmt->bindValue(':question', $question, SQLITE3_TEXT);
+    $stmt->bindValue(':option_a', $optionA, SQLITE3_TEXT);
+    $stmt->bindValue(':option_b', $optionB, SQLITE3_TEXT);
+    $stmt->bindValue(':option_c', $optionC, SQLITE3_TEXT);
+    $stmt->bindValue(':correct_option', $correctOption, SQLITE3_TEXT);
+    $stmt->bindValue(':points', $points, SQLITE3_INTEGER);
+    $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+    
+    return $stmt->execute();
+}

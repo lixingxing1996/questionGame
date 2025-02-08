@@ -58,7 +58,7 @@ $matchId = createMatch($groupId, $student1Id, $student2Id);
                     <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($student1['name']); ?></h2>
                     <img src="uploads/avatars/<?php echo $student1['avatar']; ?>" 
                          alt="头像" 
-                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                         class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
                     <div class="text-3xl font-bold text-blue-600" id="score1">0</div>
                     <div id="emotion1" class="text-6xl mt-4">🤔</div>
                     <button class="mt-4 bg-red-600 text-white px-6 py-2 rounded-lg" id="ready1" disabled>
@@ -73,7 +73,7 @@ $matchId = createMatch($groupId, $student1Id, $student2Id);
                     <h2 class="text-2xl font-bold mb-4"><?php echo htmlspecialchars($student2['name']); ?></h2>
                     <img src="uploads/avatars/<?php echo $student2['avatar']; ?>" 
                          alt="头像" 
-                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                         class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
                     <div class="text-3xl font-bold text-blue-600" id="score2">0</div>
                     <div id="emotion2" class="text-6xl mt-4">🤔</div>
                     <button class="mt-4 bg-red-600 text-white px-6 py-2 rounded-lg" id="ready2" disabled>
@@ -97,7 +97,7 @@ $matchId = createMatch($groupId, $student1Id, $student2Id);
                         <div id="timerBar" class="h-full bg-blue-600 rounded-full transition-all duration-100" style="width: 100%"></div>
                     </div>
                 </div>
-                <div id="question" class="text-xl mb-4"></div>
+                <div id="question" class="text-6xl font-medium mb-6 p-4"></div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="options">
                     <!-- 选项会通过 JavaScript 动态添加，并显示对应的按键 -->
                 </div>

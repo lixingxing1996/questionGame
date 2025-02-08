@@ -23,19 +23,50 @@ if (!$group) {
 }
 
 // 处理添加问题的表单提交
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $question = $_POST['question'] ?? '';
-    $optionA = $_POST['option_a'] ?? '';
-    $optionB = $_POST['option_b'] ?? '';
-    $optionC = $_POST['option_c'] ?? '';
-    $optionD = $_POST['option_d'] ?? '';
-    $correctOption = $_POST['correct_option'] ?? '';
-    $points = $_POST['points'] ?? 1;
     
-    if (!empty($question) && !empty($optionA) && !empty($optionB) && !empty($optionC) && !empty($correctOption)) {
-        if (addQuestion($selectedGroupId, $question, $optionA, $optionB, $optionC, $correctOption, $points)) {
-            header('Location: manage_questions.php?group_id=' . $selectedGroupId);
-            exit();
+
+
+    if (isset($_POST['action'])) {
+        
+
+
+        if ($_POST['action'] === 'delete') {
+            $questionId = $_POST['question_id'] ?? 0;
+            if ($questionId && deleteQuestion($questionId)) {
+                header('Location: manage_questions.php?group_id=' . $selectedGroupId);
+                exit();
+            }
+        } else if ($_POST['action'] === 'update') {
+          
+            $questionId = $_POST['question_id'] ?? 0;
+            $question = $_POST['question'] ?? '';
+            $optionA = $_POST['option_a'] ?? '';
+            $optionB = $_POST['option_b'] ?? '';
+            $optionC = $_POST['option_c'] ?? '';
+            $correctOption = $_POST['correct_option'] ?? '';
+            $points = $_POST['points'] ?? 1;
+
+            if ($questionId && updateQuestion($questionId, $question, $optionA, $optionB, $optionC, $correctOption, $points)) {
+                header('Location: manage_questions.php?group_id=' . $selectedGroupId);
+                exit();
+            }
+        }
+    } else {
+        $question = $_POST['question'] ?? '';
+        $optionA = $_POST['option_a'] ?? '';
+        $optionB = $_POST['option_b'] ?? '';
+        $optionC = $_POST['option_c'] ?? '';
+        $optionD = $_POST['option_d'] ?? '';
+        $correctOption = $_POST['correct_option'] ?? '';
+        $points = $_POST['points'] ?? 1;
+        
+        if (!empty($question) && !empty($optionA) && !empty($optionB) && !empty($optionC) && !empty($correctOption)) {
+            if (addQuestion($selectedGroupId, $question, $optionA, $optionB, $optionC, $correctOption, $points)) {
+                header('Location: manage_questions.php?group_id=' . $selectedGroupId);
+                exit();
+            }
         }
     }
 }
@@ -133,34 +164,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">问题</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">问题内容</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">选项</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">正确答案</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分值</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <?php foreach ($questions as $q): ?>
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <?php echo htmlspecialchars($q['id']); ?>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900">
-                                <?php echo nl2br(htmlspecialchars($q['question'])); ?>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900">
-                                <div>A: <?php echo htmlspecialchars($q['option_a']); ?></div>
-                                <div>B: <?php echo htmlspecialchars($q['option_b']); ?></div>
-                                <div>C: <?php echo htmlspecialchars($q['option_c']); ?></div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <?php echo htmlspecialchars($q['correct_option']); ?>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <?php echo htmlspecialchars($q['points']); ?>
-                            </td>
-                        </tr>
+                        <?php foreach ($questions as $question): ?>
+                            <tr data-question-id="<?php echo $question['id']; ?>">
+                                <td class="px-6 py-4 whitespace-normal text-sm text-gray-900">
+                                    <div class="editable-content"><?php echo htmlspecialchars($question['question']); ?></div>
+                                    <textarea class="hidden w-full px-3 py-2 border border-gray-300 rounded-md"><?php echo htmlspecialchars($question['question']); ?></textarea>
+                                </td>
+                                <td class="px-6 py-4 whitespace-normal text-sm text-gray-500">
+                                    <div class="option-group">
+                                        <div class="editable-content">A: <?php echo htmlspecialchars($question['option_a']); ?></div>
+                                        <input type="text" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md" value="<?php echo htmlspecialchars($question['option_a']); ?>">
+                                    </div>
+                                    <div class="option-group">
+                                        <div class="editable-content">B: <?php echo htmlspecialchars($question['option_b']); ?></div>
+                                        <input type="text" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md" value="<?php echo htmlspecialchars($question['option_b']); ?>">
+                                    </div>
+                                    <div class="option-group">
+                                        <div class="editable-content">C: <?php echo htmlspecialchars($question['option_c']); ?></div>
+                                        <input type="text" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md" value="<?php echo htmlspecialchars($question['option_c']); ?>">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="editable-content"><?php echo htmlspecialchars($question['correct_option']); ?></div>
+                                    <select class="hidden w-full px-3 py-2 border border-gray-300 rounded-md">
+                                        <option value="A" <?php echo $question['correct_option'] === 'A' ? 'selected' : ''; ?>>A</option>
+                                        <option value="B" <?php echo $question['correct_option'] === 'B' ? 'selected' : ''; ?>>B</option>
+                                        <option value="C" <?php echo $question['correct_option'] === 'C' ? 'selected' : ''; ?>>C</option>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="editable-content"><?php echo htmlspecialchars($question['points']); ?></div>
+                                    <input type="number" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md" value="<?php echo htmlspecialchars($question['points']); ?>" min="1">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <button type="button" class="edit-btn text-blue-600 hover:text-blue-900 mr-2">编辑</button>
+                                    <button type="button" class="save-btn hidden text-green-600 hover:text-green-900 mr-2">保存</button>
+                                    <button type="button" class="cancel-btn hidden text-gray-600 hover:text-gray-900 mr-2">取消</button>
+                                    <form method="post" onsubmit="return confirm('确定要删除这个问题吗？');" style="display: inline;">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="question_id" value="<?php echo $question['id']; ?>">
+                                        <button type="submit" class="text-red-600 hover:text-red-900">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -176,5 +230,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </div>
     </footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            row.querySelectorAll('.editable-content').forEach(content => content.classList.add('hidden'));
+            row.querySelectorAll('input, textarea, select').forEach(input => input.classList.remove('hidden'));
+            this.classList.add('hidden');
+            row.querySelector('.save-btn').classList.remove('hidden');
+            row.querySelector('.cancel-btn').classList.remove('hidden');
+        });
+    });
+
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            row.querySelectorAll('.editable-content').forEach(content => content.classList.remove('hidden'));
+            row.querySelectorAll('input, textarea, select').forEach(input => input.classList.add('hidden'));
+            row.querySelector('.edit-btn').classList.remove('hidden');
+            row.querySelector('.save-btn').classList.add('hidden');
+            this.classList.add('hidden');
+        });
+    });
+
+    document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const questionId = row.dataset.questionId;
+            const formData = new FormData();
+            
+            // 获取当前 URL 中的 group_id 参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const groupId = urlParams.get('group_id');
+            
+            formData.append('action', 'update');
+            formData.append('question_id', questionId);
+            formData.append('group_id', groupId);  // 添加 group_id
+            formData.append('question', row.querySelector('textarea').value);
+            formData.append('option_a', row.querySelectorAll('input[type="text"]')[0].value);
+            formData.append('option_b', row.querySelectorAll('input[type="text"]')[1].value);
+            formData.append('option_c', row.querySelectorAll('input[type="text"]')[2].value);
+            formData.append('correct_option', row.querySelector('select').value);
+            formData.append('points', row.querySelector('input[type="number"]').value);
+
+            // 显示加载状态
+            const saveBtn = row.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '保存中...';
+            saveBtn.disabled = true;
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    // 更新显示的内容而不刷新页面
+                    row.querySelector('.editable-content:nth-child(1)').textContent = row.querySelector('textarea').value;
+                    row.querySelectorAll('.option-group').forEach((group, index) => {
+                        const letter = ['A', 'B', 'C'][index];
+                        group.querySelector('.editable-content').textContent = 
+                            letter + ': ' + row.querySelectorAll('input[type="text"]')[index].value;
+                    });
+                    row.querySelector('td:nth-child(3) .editable-content').textContent = 
+                        row.querySelector('select').value;
+                    row.querySelector('td:nth-child(4) .editable-content').textContent = 
+                        row.querySelector('input[type="number"]').value;
+
+                    // 切换回显示模式
+                    row.querySelectorAll('.editable-content').forEach(content => 
+                        content.classList.remove('hidden'));
+                    row.querySelectorAll('input, textarea, select').forEach(input => 
+                        input.classList.add('hidden'));
+                    row.querySelector('.edit-btn').classList.remove('hidden');
+                    row.querySelector('.save-btn').classList.add('hidden');
+                    row.querySelector('.cancel-btn').classList.add('hidden');
+                } else {
+                    alert('保存失败，请重试');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('保存失败，请重试');
+            }).finally(() => {
+                // 恢复按钮状态
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            });
+        });
+    });
+});
+</script>
 </body>
-</html> 
+</html>
